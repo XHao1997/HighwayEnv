@@ -70,27 +70,40 @@ class HighwayEnv(AbstractEnv):
         other_per_controlled = near_split(
             self.config["vehicles_count"], num_bins=self.config["controlled_vehicles"]
         )
-
         self.controlled_vehicles = []
-        for others in other_per_controlled:
-            vehicle = Vehicle.create_random(
-                self.road,
-                speed=25,
-                lane_id=self.config["initial_lane_id"],
-                spacing=self.config["ego_spacing"],
-            )
-            vehicle = self.action_type.vehicle_class(
-                self.road, vehicle.position, vehicle.heading, vehicle.speed
-            )
-            self.controlled_vehicles.append(vehicle)
-            self.road.vehicles.append(vehicle)
+        vehicle = Vehicle.create_random(
+            self.road,
+            speed=1.8,
+            lane_id=self.config["initial_lane_id"],
+            spacing=0
+        )
+        vehicle = self.action_type.vehicle_class(
+            self.road, vehicle.position, vehicle.heading, vehicle.speed
+        )
 
-            for _ in range(others):
-                vehicle = other_vehicles_type.create_random(
-                    self.road, spacing=1 / self.config["vehicles_density"]
-                )
-                vehicle.randomize_behavior()
-                self.road.vehicles.append(vehicle)
+        self.controlled_vehicles.append(vehicle)
+        self.road.vehicles.append(vehicle)
+        vehicle = Vehicle.create_random(
+            self.road,
+            speed=2,
+            lane_id=self.config["initial_lane_id"],
+            spacing=1
+        )
+        vehicle = self.action_type.vehicle_class(
+            self.road, vehicle.position, vehicle.heading, vehicle.speed
+        )
+
+        print(vehicle.position)
+        self.controlled_vehicles.append(vehicle)
+        self.road.vehicles.append(vehicle)
+
+        vehicle = other_vehicles_type.create_random(
+        self.road,
+        speed=2,
+        lane_id=0,
+        spacing=0)
+        # vehicle.randomize_behavior()
+        self.road.vehicles.append(vehicle)
 
     def _reward(self, action: Action) -> float:
         """
